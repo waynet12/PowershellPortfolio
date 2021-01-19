@@ -1,4 +1,6 @@
-﻿ #To use .NET functionality to create forms, use class System.Windows.Forms
+﻿ #GUI menu for IT tools for Windows server administration. Click on buttons to perform each function 
+ 
+ #To use .NET functionality to create forms, use class System.Windows.Forms
 [void][Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic')
 
 
@@ -29,7 +31,6 @@ $main_form.Controls.Add($HeaderLabel)
 
 
 #Check Backup button on form: 
-Import-Module "\\Server01-dell\f_drive\Bioseal Intranet Zone\IT Maintenance\Powershell\Modules\WayneTools.psm1"
 $CheckBackupsButton = New-Object System.Windows.Forms.Button
 $CheckBackupsButton.Location = New-Object System.Drawing.Size(10,40)
 $CheckBackupsButton.Size = New-Object System.Drawing.Size(120,23)
@@ -103,13 +104,14 @@ $main_form.Controls.Add($OutputLabel)
 
 
 #Executes when user clicks on button
+Import-Module "" #pass path to getserverbackup.ps1
 $CheckBackupsButton.Add_Click(
 {
 $Label3.Text = Get-ServerBackup -ServerName(Get-Content "\\Server01-dell\f_drive\Bioseal Intranet Zone\IT Maintenance\Powershell\ServerMaintenance\servernames.txt") | Out-String
 
 }
 )
-Import-Module "\\Server01-dell\f_drive\Bioseal Intranet Zone\IT Maintenance\Powershell\ServerMaintenance\CheckBackups\CheckEpicorTaskScheduler.ps1" 
+Import-Module "" #pass path to checktaskscheduler.ps1
 $TaskSchedulerResultButton.Add_Click(
 {
 
@@ -117,7 +119,7 @@ $Label3.Text =  get-taskschedulerresult | Select-Object -Property TaskName,LastR
 
 }
 )
-Import-Module "\\Server01-dell\f_drive\Bioseal Intranet Zone\IT Maintenance\Powershell\Modules\ChangeComputerNames.ps1"
+Import-Module "" #pass path to changecomputernames.ps1
 $ChangeComputerNameButton.Add_Click(
 {
 $title = 'Change Computer Name'
@@ -128,7 +130,8 @@ $newcomputername = [Microsoft.VisualBasic.Interaction]::InputBox($msg2, $title)
 Change-ComputerName -computername $oldcomputername -newcomputername $newcomputername
 }
 )
-import-module "\\Server01-dell\f_drive\Bioseal Intranet Zone\IT Maintenance\Powershell\Modules\unlockuser.ps1"
+
+import-module "" #pass path to unlockaduser.ps1
 $UnlockUserButton.Add_Click{
 $title = 'Unlock User'
 $msg   = 'Enter the user first and last name, no spaces:'
@@ -137,6 +140,8 @@ Unlock-User -username $username
 $returnvalue = Unlock-User($username)
 $Label3.Text = $returnvalue
 }
+
+import-module "" #pass path to checkeventlog.ps1
 $CheckEventLogButton.Add_Click{
 $Label3.Text = ""
 $servernames = Get-Content "\\Server01-dell\f_drive\Bioseal Intranet Zone\IT Maintenance\Powershell\ServerMaintenance\ServerNames.txt"
@@ -147,7 +152,8 @@ $Label3.Text +=  $servername
 $Label3.Text += Get-Eventlog -ComputerName $servername -LogName System -Newest 1000 | where {$_.EntryType -eq "0"} | select-object TimeWritten,EntryType,Source,Message | Out-String
 }
 }
-Import-Module "\\Server01-dell\F_DRIVE\Bioseal Intranet Zone\IT Maintenance\Powershell\Modules\AddEmailToSpamList.ps1"
+
+Import-Module "" #pass path to addemailtospamlist.ps1
 $BlockEmailButton.Add_Click{
     #Block Email Address or domain input form
     $blockemailform = New-Object System.Windows.Forms.Form
@@ -191,9 +197,6 @@ $blockemailform.Controls.Add($emailTextBox)
 $domainTextBox.Location = New-Object System.Drawing.Point(10,100)
 $domainTextBox.Size = New-Object System.Drawing.Size(300,20)
 $blockemailform.Controls.Add($domainTextBox)
-    
-
-
 $blockemailform.StartPosition = 'CenterScreen'
 $blockemailform.TopMost = $true
     $blockemailform.Add_Shown({$emailTextBox.Select()})
@@ -213,7 +216,8 @@ $blockemailform.TopMost = $true
         $Label3.Text = Block-Email -domainlist $domainTextBox.Text -addresslist $emailTextBox.Text
     }
 }
-import-module "\\Server01-dell\f_drive\Bioseal Intranet Zone\IT Maintenance\Powershell\Modules\Get-ADComputerInfo.ps1"
+#pass path to get-adcomputerinfo.ps1
+import-module "" 
 $GetComputerInventoryButton.Add_Click{
 Get-ADComputerInfo
 $Label3.Text = 'Please wait for the excel document to process and open.'
